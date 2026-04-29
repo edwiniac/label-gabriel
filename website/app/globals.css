@@ -18,20 +18,20 @@ html {
 }
 
 body {
-  background-color: #0A0A0A;
-  color: #F0EBE1;
+  background-color: #FDFAF6;
+  color: #1C1714;
   font-family: var(--font-dm-sans);
   -webkit-font-smoothing: antialiased;
   cursor: none;
 }
 
-/* Grain overlay */
+/* Subtle warm paper texture */
 body::before {
   content: "";
   position: fixed;
   inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
-  opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  opacity: 0.025;
   pointer-events: none;
   z-index: 9999;
 }
@@ -39,9 +39,9 @@ body::before {
 /* Custom cursor */
 .cursor {
   position: fixed;
-  width: 8px;
-  height: 8px;
-  background: #C8A96E;
+  width: 7px;
+  height: 7px;
+  background: #C4A35A;
   border-radius: 50%;
   pointer-events: none;
   z-index: 10000;
@@ -50,9 +50,9 @@ body::before {
 
 .cursor-ring {
   position: fixed;
-  width: 36px;
-  height: 36px;
-  border: 1px solid rgba(200, 169, 110, 0.5);
+  width: 32px;
+  height: 32px;
+  border: 1px solid rgba(196, 163, 90, 0.45);
   border-radius: 50%;
   pointer-events: none;
   z-index: 10000;
@@ -61,6 +61,6 @@ body::before {
 }
 
 ::selection {
-  background: #C8A96E;
-  color: #0A0A0A;
+  background: #C4A35A;
+  color: #FDFAF6;
 }

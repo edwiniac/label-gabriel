@@ -8,11 +8,14 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        void: "#0A0A0A",
-        surface: "#141414",
-        cream: "#F0EBE1",
-        muted: "#6B6560",
-        gold: "#C8A96E",
+        parchment: "#FDFAF6",
+        ivory: "#F5F0E8",
+        linen: "#EDE5D8",
+        stone: "#8A7F76",
+        ink: "#1C1714",
+        gold: "#C4A35A",
+        blush: "#E8D0C0",
+        sage: "#B5C4B1",
       },
       fontFamily: {
         display: ["var(--font-cormorant)", "serif"],

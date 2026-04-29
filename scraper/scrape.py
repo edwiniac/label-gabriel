@@ -116,7 +116,7 @@ def scrape(username: str) -> None:
         if not data.get("more_available") or not items:
             break
         max_id = data.get("next_max_id")
-        time.sleep(1.5)
+        time.sleep(3.0)
 
     print(f"\n→ Downloading images for {len(all_items)} posts…")
     posts = []
