@@ -110,7 +110,7 @@ export function Hero() {
           <img
             src="/logo-hd.png"
             alt="Label Gabriel"
-            className="w-full max-w-[520px] h-auto select-none ml-6 lg:ml-14"
+            className="w-full max-w-[520px] h-auto select-none ml-2 lg:ml-5"
             draggable={false}
           />
         </motion.div>
