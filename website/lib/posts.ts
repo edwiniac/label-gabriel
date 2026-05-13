@@ -22,7 +22,7 @@ interface RawPost {
 }
 
 export function getPosts(): PostData[] {
-  const dataPath = path.join(process.cwd(), "..", "data", "posts.json");
+  const dataPath = path.join(process.cwd(), "data", "posts.json");
   const raw: RawPost[] = JSON.parse(fs.readFileSync(dataPath, "utf-8"));
 
   return raw.map((p) => ({
