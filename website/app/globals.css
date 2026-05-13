@@ -2,12 +2,59 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ============================================
+   Design Tokens — Label Gabriel
+   ============================================ */
+
 :root {
+  /* Brand palette */
+  --color-parchment: #FDFAF6;
+  --color-ivory: #F5F0E8;
+  --color-linen: #EDE5D8;
+  --color-gold: #C4A35A;
+  --color-gold-dim: rgba(196, 163, 90, 0.3);
+  --color-ink: #1C1714;
+  --color-stone: #8A7F76;
+  --color-blush: #E8D0C0;
+  --color-sage: #B5C4B1;
+
+  /* Semantic tokens */
+  --bg-primary: var(--color-parchment);
+  --bg-secondary: var(--color-ivory);
+  --bg-tertiary: var(--color-linen);
+  --text-primary: var(--color-ink);
+  --text-secondary: var(--color-stone);
+  --text-accent: var(--color-gold);
+  --border-default: rgba(139, 127, 118, 0.15);
+  --border-accent: var(--color-gold);
+
+  /* Spacing scale */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 2rem;
+  --space-xl: 4rem;
+  --space-2xl: 8rem;
+
+  /* Animation easing */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --duration-fast: 200ms;
+  --duration-normal: 400ms;
+  --duration-slow: 800ms;
+
+  /* Typography */
   --font-cormorant: "Cormorant Garamond", serif;
   --font-dm-sans: "DM Sans", sans-serif;
 }
 
-* {
+/* ============================================
+   Reset & Base
+   ============================================ */
+
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   padding: 0;
   margin: 0;
@@ -18,15 +65,20 @@ html {
 }
 
 body {
-  background-color: #FDFAF6;
-  color: #1C1714;
+  background-color: var(--color-parchment);
+  color: var(--color-ink);
   font-family: var(--font-dm-sans);
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   cursor: none;
   overflow-x: hidden;
+  line-height: 1.6;
 }
 
-/* Subtle warm paper texture */
+/* ============================================
+   Paper Grain Texture Overlay
+   ============================================ */
+
 body::before {
   content: "";
   position: fixed;
@@ -37,12 +89,15 @@ body::before {
   z-index: 9999;
 }
 
-/* Custom cursor */
+/* ============================================
+   Custom Cursor (gold dot + ring)
+   ============================================ */
+
 .cursor {
   position: fixed;
   width: 7px;
   height: 7px;
-  background: #C4A35A;
+  background: var(--color-gold);
   border-radius: 50%;
   pointer-events: none;
   z-index: 10000;
@@ -53,7 +108,7 @@ body::before {
   position: fixed;
   width: 32px;
   height: 32px;
-  border: 1px solid rgba(196, 163, 90, 0.45);
+  border: 1px solid var(--color-gold-dim);
   border-radius: 50%;
   pointer-events: none;
   z-index: 10000;
@@ -61,7 +116,158 @@ body::before {
   transition: opacity 0.3s;
 }
 
+/* ============================================
+   Selection
+   ============================================ */
+
 ::selection {
-  background: #C4A35A;
-  color: #FDFAF6;
+  background: var(--color-gold);
+  color: var(--color-parchment);
+}
+
+/* ============================================
+   Focus Visible — Gold ring outline
+   ============================================ */
+
+:focus-visible {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+@supports selector(:focus-visible) {
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
+}
+
+/* ============================================
+   Skip-to-content link (accessibility)
+   ============================================ */
+
+.skip-to-content {
+  position: absolute;
+  top: -100%;
+  left: 1rem;
+  z-index: 10001;
+  padding: 0.5rem 1rem;
+  background: var(--color-gold);
+  color: var(--color-parchment);
+  font-family: var(--font-dm-sans);
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
+  border-radius: 4px;
+  transition: top 0.2s ease;
+}
+
+.skip-to-content:focus {
+  top: 1rem;
+}
+
+/* ============================================
+   Utility Classes
+   ============================================ */
+
+/* Better heading wrapping */
+.text-balance {
+  text-wrap: balance;
+}
+
+/* Gradient edge fades */
+.fade-top {
+  mask-image: linear-gradient(to bottom, transparent 0%, black 8%);
+}
+
+.fade-bottom {
+  mask-image: linear-gradient(to top, transparent 0%, black 8%);
+}
+
+.fade-both {
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    black 8%,
+    black 92%,
+    transparent 100%
+  );
+}
+
+/* ============================================
+   Reduced Motion
+   Disable all motion-based animations;
+   preserve opacity-only transitions for
+   users who prefer reduced motion.
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Allow opacity-only transitions (no vestibular risk) */
+  .cursor-ring {
+    transition: opacity 0.3s;
+  }
+}
+
+/* ============================================
+   Prefers Contrast
+   ============================================ */
+
+@media (prefers-contrast: high) {
+  body {
+    background-color: #ffffff;
+    color: #000000;
+  }
+
+  body::before {
+    display: none;
+  }
+
+  :root {
+    --color-gold: #8B6914;
+    --color-gold-dim: rgba(139, 105, 20, 0.5);
+  }
+
+  ::selection {
+    background: #000000;
+    color: #ffffff;
+  }
+}
+
+/* ============================================
+   Print Styles
+   ============================================ */
+
+@media print {
+  html {
+    scroll-behavior: auto;
+  }
+
+  body {
+    cursor: auto;
+    background: #ffffff;
+  }
+
+  body::before {
+    display: none;
+  }
+
+  .cursor,
+  .cursor-ring {
+    display: none !important;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
 }

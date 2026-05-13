@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import {
   motion,
   useMotionValue, useSpring, useTransform, useMotionTemplate,
+  type MotionValue,
 } from "framer-motion";
 import Link from "next/link";
 import { Emblem } from "./Emblem";
@@ -92,7 +93,7 @@ export function Hero() {
   };
 
   return (
-    <section className="relative h-screen flex overflow-hidden bg-parchment">
+    <section id="hero" className="relative h-screen flex overflow-hidden bg-parchment">
 
       {/* ── LEFT PANEL ── */}
       <motion.div
@@ -123,12 +124,12 @@ export function Hero() {
             className="relative z-10 font-ui text-[10px] tracking-[0.45em] text-gold uppercase mb-5"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.5 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
           >
             <motion.span
               className="inline-block"
-              animate={{ opacity: [0.5, 1, 0.5] }}
-              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+              animate={{ opacity: [0.35, 1, 0.35], scale: [0.98, 1.02, 0.98] }}
+              transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
             >
               ✦
             </motion.span>
@@ -141,7 +142,7 @@ export function Hero() {
             style={{ fontSize: "clamp(2rem, 3.8vw, 3.8rem)" }}
             initial={{ opacity: 0, y: 28 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.1, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 1.1, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
           >
             <span className="italic block">They dreamed it.</span>
             <span className="font-light not-italic text-stone block">We crafted it.</span>
@@ -152,13 +153,13 @@ export function Hero() {
             className="relative z-10 flex items-center gap-4 mb-8"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.7, delay: 0.85 }}
+            transition={{ duration: 0.7, delay: 0.6 }}
           >
             <motion.div
               className="h-px bg-gold shrink-0"
               initial={{ width: 0 }}
               animate={{ width: 40 }}
-              transition={{ duration: 0.9, delay: 1.05, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ duration: 0.9, delay: 0.85, ease: [0.16, 1, 0.3, 1] }}
             />
             <span className="font-ui text-[10px] tracking-[0.28em] text-stone uppercase">
               Bridal · Baptism · Custom Wear
@@ -261,23 +262,37 @@ export function Hero() {
         </motion.div>
 
         {/* 490+ badge with count-up */}
-        <CountBadge />
+        <CountBadge mx={mx} my={my} />
       </div>
 
       {/* Mobile fallback */}
-      <div className="absolute inset-0 -z-10 md:hidden">
-        <img src={IMGS[0].src} alt="Label Gabriel" className="w-full h-full object-cover" />
+      <motion.div
+        className="absolute inset-0 -z-10 md:hidden"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.8 }}
+      >
+        <motion.img
+          src={IMGS[0].src}
+          alt="Label Gabriel"
+          className="w-full h-full object-cover"
+          animate={{ scale: [1, 1.03, 1] }}
+          transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
+        />
         <div className="absolute inset-0 bg-gradient-to-t from-parchment via-parchment/70 to-parchment/30" />
-      </div>
+      </motion.div>
     </section>
   );
 }
 
-function CountBadge() {
+function CountBadge({ mx, my }: { mx: MotionValue<number>; my: MotionValue<number> }) {
   const count = useCountUp(490, 1600, 1400);
+  const bx = useTransform(mx, (v) => v * -0.03);
+  const by = useTransform(my, (v) => v * -0.03);
   return (
     <motion.div
       className="absolute bottom-[5%] left-[3%] z-20 bg-parchment/90 backdrop-blur-sm px-4 py-3 border border-gold/30"
+      style={{ x: bx, y: by }}
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.9, delay: 1.4 }}
@@ -297,24 +312,38 @@ function MagneticLink({ href, children }: { href: string; children: React.ReactN
   const y = useMotionValue(0);
   const sx = useSpring(x, { stiffness: 200, damping: 18 });
   const sy = useSpring(y, { stiffness: 200, damping: 18 });
+  const proximity = useMotionValue(0);
+  const sScale = useSpring(useTransform(proximity, [0, 1], [1, 1.02]), { stiffness: 200, damping: 18 });
 
   const onMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const r = e.currentTarget.getBoundingClientRect();
+    const dx = (e.clientX - r.left - r.width / 2) / (r.width / 2);
+    const dy = (e.clientY - r.top - r.height / 2) / (r.height / 2);
+    const dist = Math.min(Math.sqrt(dx * dx + dy * dy), 1);
     x.set((e.clientX - r.left - r.width / 2) * 0.35);
     y.set((e.clientY - r.top - r.height / 2) * 0.35);
+    proximity.set(dist);
   };
-  const onLeave = () => { x.set(0); y.set(0); };
+  const onLeave = () => { x.set(0); y.set(0); proximity.set(0); };
 
   return (
     <motion.div
-      style={{ x: sx, y: sy }}
+      style={{ x: sx, y: sy, scale: sScale }}
       onMouseMove={onMove}
       onMouseLeave={onLeave}
-      className="inline-block"
+      className="inline-block relative"
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.8, delay: 1.05 }}
+      transition={{ duration: 0.8, delay: 0.8 }}
     >
+      {/* Gold keyline shimmer on initial load */}
+      <motion.div
+        className="absolute inset-0 pointer-events-none"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: [0, 0.55, 0] }}
+        transition={{ duration: 1.6, delay: 1.2, ease: "easeInOut" }}
+        style={{ boxShadow: "inset 0 0 0 1.5px rgba(196,163,90,0.7)" }}
+      />
       <Link
         href={href}
         className="inline-flex items-center font-ui text-[10px] tracking-[0.38em] text-ink uppercase border border-ink/50 px-9 py-4 hover:bg-ink hover:text-parchment hover:border-ink transition-all duration-300"

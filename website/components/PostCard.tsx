@@ -15,13 +15,13 @@ export function PostCard({ post, index, onClick }: PostCardProps) {
 
   return (
     <motion.article
-      className="relative group cursor-none"
+      className="relative group cursor-none border border-transparent hover:border-gold/30 transition-colors duration-500"
       initial={{ opacity: 0, y: 24 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-60px" }}
       transition={{
         duration: 0.7,
-        delay: (index % 3) * 0.07,
+        delay: index * 0.05,
         ease: [0.16, 1, 0.3, 1],
       }}
       onClick={() => onClick(post)}
@@ -30,8 +30,8 @@ export function PostCard({ post, index, onClick }: PostCardProps) {
       <div className="relative aspect-[3/4] overflow-hidden bg-ivory">
         <img
           src={post.imagePath}
-          alt={firstLine || "Label Gabriel"}
-          className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
+          alt={firstLine || "Label Gabriel creation"}
+          className="w-full h-full object-cover transition-transform duration-[400ms] ease-out group-hover:scale-[1.02]"
           loading="lazy"
         />
 
@@ -48,7 +48,10 @@ export function PostCard({ post, index, onClick }: PostCardProps) {
           {post.hashtags.length > 0 && (
             <div className="flex flex-wrap gap-1">
               {post.hashtags.slice(0, 3).map((tag) => (
-                <span key={tag} className="font-ui text-[9px] tracking-widest text-gold uppercase">
+                <span
+                  key={tag}
+                  className="font-ui text-[9px] tracking-widest text-gold uppercase"
+                >
                   #{tag}
                 </span>
               ))}
@@ -67,7 +70,10 @@ export function PostCard({ post, index, onClick }: PostCardProps) {
       {/* Date below image */}
       <div className="pt-2.5 pb-5 border-b border-linen/60">
         <time className="font-ui text-[9px] tracking-[0.25em] text-stone uppercase">
-          {post.date.toLocaleDateString("en-US", { month: "long", year: "numeric" })}
+          {post.date.toLocaleDateString("en-US", {
+            month: "long",
+            year: "numeric",
+          })}
         </time>
       </div>
     </motion.article>

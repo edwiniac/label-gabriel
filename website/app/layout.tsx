@@ -4,6 +4,7 @@ import "./globals.css";
 import { CustomCursor } from "@/components/CustomCursor";
 import { SmoothScroll } from "@/components/SmoothScroll";
 import { ScrollProgress } from "@/components/ScrollProgress";
+import { PageTransition } from "@/components/PageTransition";
 
 const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
@@ -21,12 +22,30 @@ const dmSans = DM_Sans({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://labelgabriel.com"),
   title: "Label Gabriel",
-  description: "Fashion label — editorial lookbook",
+  description:
+    "Bespoke bridal, baptism, and custom fashion. Editorially crafted garments by Label Gabriel — where heritage textiles meet modern silhouette.",
   openGraph: {
-    title: "Label Gabriel",
-    description: "Fashion label — editorial lookbook",
+    title: "Label Gabriel — Bespoke Bridal & Custom Fashion",
+    description:
+      "Bespoke bridal, baptism, and custom fashion. Editorially crafted garments where heritage textiles meet modern silhouette.",
     type: "website",
+    images: [
+      {
+        url: "/images/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Label Gabriel — Bespoke Fashion Label",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Label Gabriel — Bespoke Bridal & Custom Fashion",
+    description:
+      "Bespoke bridal, baptism, and custom fashion. Editorially crafted garments where heritage textiles meet modern silhouette.",
+    images: ["/images/og-image.jpg"],
   },
 };
 
@@ -38,10 +57,17 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${cormorant.variable} ${dmSans.variable}`}>
       <body>
+        {/* Accessibility: skip-to-content link */}
+        <a href="#main-content" className="skip-to-content">
+          Skip to content
+        </a>
+
         <ScrollProgress />
         <CustomCursor />
         <SmoothScroll>
-          {children}
+          <PageTransition>
+            <main id="main-content">{children}</main>
+          </PageTransition>
         </SmoothScroll>
       </body>
     </html>

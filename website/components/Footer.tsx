@@ -2,10 +2,20 @@ import { Emblem } from "./Emblem";
 
 export function Footer() {
   return (
-    <footer className="bg-ivory border-t border-linen px-8 py-16">
-      <div className="max-w-4xl mx-auto flex flex-col items-center gap-7 text-center">
+    <footer className="bg-ivory px-8 py-16">
+      {/* Gold rule line at top */}
+      <div className="max-w-4xl mx-auto mb-12">
+        <div className="w-full h-px bg-gradient-to-r from-transparent via-gold/30 to-transparent" />
+      </div>
 
+      <div className="max-w-4xl mx-auto flex flex-col items-center gap-8 text-center">
         <Emblem size="md" />
+
+        {/* Brand — larger display name */}
+        <p className="font-display italic text-2xl text-ink">Label Gabriel</p>
+        <p className="font-ui text-[10px] tracking-[0.25em] text-stone uppercase -mt-5">
+          The Premium Designer Studio
+        </p>
 
         <div className="flex items-center gap-5">
           <div className="w-8 h-px bg-linen" />
@@ -32,7 +42,12 @@ export function Footer() {
           </span>
         </div>
 
-        <p className="font-ui text-[9px] tracking-widest text-stone/40 uppercase mt-2">
+        {/* Est. line */}
+        <p className="font-ui text-[9px] tracking-widest text-stone/50 uppercase mt-2">
+          Est. 2024 · Alakode, Kerala
+        </p>
+
+        <p className="font-ui text-[9px] tracking-widest text-stone/30 uppercase">
           © {new Date().getFullYear()} Label Gabriel. All rights reserved.
         </p>
       </div>

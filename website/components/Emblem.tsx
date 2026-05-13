@@ -18,8 +18,8 @@ export function Emblem({ size = "md" }: EmblemProps) {
   return (
     <motion.div
       className="flex items-center"
-      whileHover={{ scale: 1.015 }}
-      transition={{ duration: 0.35, ease: "easeOut" }}
+      whileHover={{ scale: 1.015, rotate: 2.5 }}
+      transition={{ type: "spring", stiffness: 200, damping: 18 }}
     >
       <img
         src="/logo-hd.png"

@@ -13,17 +13,27 @@ interface LookbookTeaserProps {
 
 const STAGGER = {
   hidden: {},
-  show: { transition: { staggerChildren: 0.1 } },
+  show: { transition: { staggerChildren: 0.12 } },
 };
 
 const EASE = [0.16, 1, 0.3, 1] as [number, number, number, number];
 
 const CELL = {
-  hidden: { opacity: 0, scale: 0.96 },
-  show: { opacity: 1, scale: 1, transition: { duration: 0.8, ease: EASE } },
+  hidden: { opacity: 0, scale: 0.96, y: 16 },
+  show: {
+    opacity: 1,
+    scale: 1,
+    y: 0,
+    transition: { duration: 0.8, ease: EASE },
+  },
 };
 
-export function LookbookTeaser({ bridal, baptism, ethnic, custom }: LookbookTeaserProps) {
+export function LookbookTeaser({
+  bridal,
+  baptism,
+  ethnic,
+  custom,
+}: LookbookTeaserProps) {
   const images = [
     { post: bridal, label: "Bridal", tall: true },
     { post: ethnic, label: "Ethnic", tall: false },
@@ -48,7 +58,9 @@ export function LookbookTeaser({ bridal, baptism, ethnic, custom }: LookbookTeas
           <h2 className="font-display italic text-4xl md:text-5xl text-ink leading-tight">
             A glimpse of
             <br />
-            <span className="font-light not-italic text-stone">what we craft.</span>
+            <span className="font-light not-italic text-stone">
+              what we craft.
+            </span>
           </h2>
         </div>
         <Link
@@ -72,7 +84,9 @@ export function LookbookTeaser({ bridal, baptism, ethnic, custom }: LookbookTeas
         {images.map(({ post, label, tall }, i) => (
           <motion.div
             key={post!.id}
-            className={`relative overflow-hidden group ${tall ? "row-span-2" : ""}`}
+            className={`relative overflow-hidden group ${
+              tall ? "row-span-2" : ""
+            }`}
             style={{ aspectRatio: tall ? "3/5" : "4/3" }}
             variants={CELL}
           >
@@ -81,12 +95,20 @@ export function LookbookTeaser({ bridal, baptism, ethnic, custom }: LookbookTeas
               alt={label}
               className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
             />
-            <div className="absolute inset-0 bg-ink/0 group-hover:bg-ink/20 transition-colors duration-500" />
-            <div className="absolute bottom-3 left-3 opacity-0 group-hover:opacity-100 transition-opacity duration-400">
+
+            {/* Gold-tinted overlay on hover */}
+            <div className="absolute inset-0 bg-gradient-to-t from-gold/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <div className="absolute inset-0 bg-ink/0 group-hover:bg-ink/15 transition-colors duration-500" />
+
+            {/* Label reveal on hover */}
+            <div className="absolute bottom-3 left-3 opacity-0 group-hover:opacity-100 translate-y-1 group-hover:translate-y-0 transition-all duration-400">
               <span className="font-ui text-[9px] tracking-[0.35em] text-parchment uppercase">
                 {label}
               </span>
             </div>
+
+            {/* Gold border on hover */}
+            <div className="absolute inset-0 border border-transparent group-hover:border-gold/20 transition-colors duration-500 pointer-events-none" />
           </motion.div>
         ))}
       </motion.div>
