@@ -2,6 +2,6 @@
   "name": "label-gabriel",
   "private": true,
   "scripts": {
-    "vercel-build": "cd website && npm install && npm run build"
+    "vercel-build": "cd website && npm install && npm run build && cp -r public ../public"
   }
 }

@@ -117,6 +117,14 @@ interface ParallaxImageProps {
  * page scrolls — the classic editorial parallax. The <img> is
  * over-scaled so the drift never exposes empty edges.
  */
+
+const objectPositionClasses: Record<string, string> = {
+  "50% 30%": "object-[50%_30%]",
+  "top": "object-top",
+  "center": "object-center",
+  "50% 50%": "object-center",
+};
+
 export function ParallaxImage({
   src,
   alt,
@@ -148,8 +156,8 @@ export function ParallaxImage({
         loading={priority ? "eager" : "lazy"}
         sizes={sizes}
         draggable={false}
-        style={{ y, scale: reduced ? 1 : 1.12, objectPosition }}
-        className={`absolute inset-0 h-full w-full object-cover ${imgClassName}`}
+        style={{ y, scale: reduced ? 1 : 1.12 }}
+        className={`absolute inset-0 h-full w-full object-cover ${objectPositionClasses[objectPosition] ?? ""} ${imgClassName}`}
       />
     </div>
   );
