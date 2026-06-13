@@ -149,7 +149,7 @@ export function ParallaxImage({
   const y = useSpring(raw, SPRING);
 
   return (
-    <div ref={ref} className={`relative overflow-hidden ${className}`}>
+    <div ref={ref} className={`overflow-hidden ${className}`}>
       <motion.img
         src={src}
         alt={alt}
