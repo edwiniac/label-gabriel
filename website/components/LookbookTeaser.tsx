@@ -55,12 +55,15 @@ function LookbookCell({
       style={{ aspectRatio: tall ? "3/5" : "4/3" }}
       variants={CELL}
     >
-      {/* Parallax layer — over-scaled so drift never exposes edges. */}
+      {/* Parallax layer — image is over-scaled (112%) so drift never exposes
+          edges. object-top keeps the subject (face/garment) in frame since
+          fashion photos place the important content in the upper ~60%. */}
       <motion.div className="absolute inset-0" style={{ y }}>
         <img
           src={post.imagePath}
           alt={label}
-          className="w-full h-[112%] object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
+          className="w-full h-[115%] object-cover object-top transition-transform duration-700 ease-out group-hover:scale-[1.04]"
+          loading="lazy"
         />
       </motion.div>
 

@@ -255,7 +255,7 @@ export function Hero() {
         >
           <motion.img
             src={IMGS[0].src} alt={IMGS[0].alt}
-            className="w-full h-full object-cover object-center"
+            className="w-full h-full object-cover object-[50%_30%]"
             animate={{ scale: [1, 1.015, 1] }}
             transition={{ duration: IMGS[0].breathDuration, repeat: Infinity, ease: "easeInOut", delay: IMGS[0].breathDelay }}
           />
@@ -310,7 +310,7 @@ export function Hero() {
         <motion.img
           src={IMGS[0].src}
           alt="Label Gabriel"
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover object-[50%_30%]"
           animate={{ scale: [1, 1.03, 1] }}
           transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
         />

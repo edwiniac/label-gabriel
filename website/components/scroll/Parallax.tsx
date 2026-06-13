@@ -102,6 +102,9 @@ interface ParallaxImageProps {
   className?: string;
   /** Extra classes for the <img> (object-fit etc.). */
   imgClassName?: string;
+  /** CSS object-position value — defaults to "50% 30%" so fashion
+   *  subjects (faces/garments in the upper portion) stay in frame. */
+  objectPosition?: string;
   /** Travel in px the image drifts within its frame (default 70). */
   distance?: number;
   priority?: boolean;
@@ -118,6 +121,7 @@ export function ParallaxImage({
   alt,
   className = "",
   imgClassName = "",
+  objectPosition = "50% 30%",
   distance = 70,
   priority = false,
   sizes,
@@ -143,7 +147,7 @@ export function ParallaxImage({
         loading={priority ? "eager" : "lazy"}
         sizes={sizes}
         draggable={false}
-        style={{ y, scale: reduced ? 1 : 1.12 }}
+        style={{ y, scale: reduced ? 1 : 1.12, objectPosition }}
         className={`absolute inset-0 h-full w-full object-cover ${imgClassName}`}
       />
     </div>

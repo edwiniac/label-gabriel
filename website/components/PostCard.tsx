@@ -41,7 +41,7 @@ export function PostCard({ post, index, onClick }: PostCardProps) {
         <img
           src={post.imagePath}
           alt={firstLine || "Label Gabriel creation"}
-          className="w-full h-full object-cover transition-transform duration-[400ms] ease-out group-hover:scale-[1.02]"
+          className="w-full h-full object-cover object-[50%_30%] transition-transform duration-[400ms] ease-out group-hover:scale-[1.02]"
           loading="lazy"
         />
 
