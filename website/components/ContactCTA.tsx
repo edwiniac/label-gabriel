@@ -1,6 +1,11 @@
 "use client";
 
-import { motion, useMotionValue, useSpring } from "framer-motion";
+import {
+  motion,
+  useMotionValue,
+  useSpring,
+  useReducedMotion,
+} from "framer-motion";
 
 export function ContactCTA() {
   return (
@@ -76,12 +81,14 @@ export function ContactCTA() {
 }
 
 function MagneticCTAButton() {
+  const reduce = useReducedMotion();
   const x = useMotionValue(0);
   const y = useMotionValue(0);
   const sx = useSpring(x, { stiffness: 200, damping: 18 });
   const sy = useSpring(y, { stiffness: 200, damping: 18 });
 
   const onMove = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (reduce) return;
     const r = e.currentTarget.getBoundingClientRect();
     x.set((e.clientX - r.left - r.width / 2) * 0.3);
     y.set((e.clientY - r.top - r.height / 2) * 0.3);
@@ -96,9 +103,13 @@ function MagneticCTAButton() {
       href="https://www.instagram.com/label_gabriel/"
       target="_blank"
       rel="noopener noreferrer"
-      style={{ x: sx, y: sy }}
+      data-cursor
+      style={reduce ? undefined : { x: sx, y: sy }}
       onMouseMove={onMove}
       onMouseLeave={onLeave}
+      whileHover={reduce ? undefined : { scale: 1.02 }}
+      whileTap={reduce ? undefined : { scale: 0.98 }}
+      transition={{ type: "spring", stiffness: 300, damping: 20 }}
       className="inline-block font-ui text-[10px] tracking-[0.4em] text-ink uppercase bg-gold px-12 py-4 hover:bg-gold/90 transition-colors duration-300"
     >
       DM on Instagram

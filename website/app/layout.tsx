@@ -5,6 +5,7 @@ import { CustomCursor } from "@/components/CustomCursor";
 import { SmoothScroll } from "@/components/SmoothScroll";
 import { ScrollProgress } from "@/components/ScrollProgress";
 import { PageTransition } from "@/components/PageTransition";
+import { IntroGate } from "@/components/IntroGate";
 
 const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
@@ -61,6 +62,9 @@ export default function RootLayout({
         <a href="#main-content" className="skip-to-content">
           Skip to content
         </a>
+
+        {/* Intro loading screen — shows once per session on first load */}
+        <IntroGate />
 
         <ScrollProgress />
         <CustomCursor />

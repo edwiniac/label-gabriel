@@ -70,9 +70,17 @@ body {
   font-family: var(--font-dm-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  cursor: none;
   overflow-x: hidden;
   line-height: 1.6;
+}
+
+/* Hide native cursor ONLY on fine-pointer (mouse) devices, where the
+   custom cursor is rendered. Touch / coarse-pointer devices keep the
+   native cursor for accessibility. */
+@media (hover: hover) and (pointer: fine) {
+  body {
+    cursor: none;
+  }
 }
 
 /* ============================================
@@ -91,29 +99,68 @@ body::before {
 
 /* ============================================
    Custom Cursor (gold dot + ring)
+   Positioned via translate3d() set in JS (transform-only,
+   GPU-composited). Centering offset lives in the JS transform.
+   Hidden by default; only shown on fine-pointer devices.
    ============================================ */
 
-.cursor {
-  position: fixed;
-  width: 7px;
-  height: 7px;
-  background: var(--color-gold);
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 10000;
-  transform: translate(-50%, -50%);
+.cursor,
+.cursor-ring {
+  display: none;
 }
 
-.cursor-ring {
-  position: fixed;
-  width: 32px;
-  height: 32px;
-  border: 1px solid var(--color-gold-dim);
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 10000;
-  transform: translate(-50%, -50%);
-  transition: opacity 0.3s;
+@media (hover: hover) and (pointer: fine) {
+  .cursor {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 7px;
+    height: 7px;
+    background: var(--color-gold);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 10000;
+    will-change: transform, opacity;
+    transition: opacity 0.25s ease;
+  }
+
+  .cursor-ring {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 32px;
+    height: 32px;
+    border: 1px solid var(--color-gold-dim);
+    background: transparent;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 10000;
+    will-change: transform, opacity, width, height;
+    /* Note: positional transform is driven by JS via the --cursor-scale
+       custom property; opacity / border / background animate here. */
+    transition:
+      opacity 0.25s ease,
+      border-color 0.3s ease,
+      background-color 0.3s ease;
+  }
+
+  /* Hidden when pointer leaves the window */
+  .cursor.is-hidden,
+  .cursor-ring.is-hidden {
+    opacity: 0;
+  }
+
+  /* Interactive hover state — ring grows + fills subtly, dot recedes */
+  .cursor-ring.is-active {
+    border-color: var(--color-gold);
+    background: rgba(196, 163, 90, 0.08);
+  }
+
+  .cursor.is-active {
+    opacity: 0.4;
+  }
 }
 
 /* ============================================
@@ -210,9 +257,17 @@ body::before {
     scroll-behavior: auto !important;
   }
 
-  /* Allow opacity-only transitions (no vestibular risk) */
+  /* Keep the custom cursor usable: opacity / color transitions carry
+     no vestibular risk, so we preserve them under reduced-motion. */
+  .cursor {
+    transition: opacity 0.25s ease !important;
+  }
+
   .cursor-ring {
-    transition: opacity 0.3s;
+    transition:
+      opacity 0.25s ease,
+      border-color 0.3s ease,
+      background-color 0.3s ease !important;
   }
 }
 

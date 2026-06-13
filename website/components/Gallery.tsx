@@ -139,7 +139,7 @@ export function Gallery({ posts, initialTag }: GalleryProps) {
         </motion.div>
       ) : (
         <>
-          {/* Grid — masonry stagger via PostCard delay */}
+          {/* Grid — per-row stagger via capped PostCard delay */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-x-5 gap-y-8 lg:gap-x-6 lg:gap-y-10 2xl:gap-x-8 2xl:gap-y-12">
             {visible.map((post, i) => (
               <PostCard
