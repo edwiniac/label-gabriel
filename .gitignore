@@ -2,3 +2,4 @@ libreui/
 .remember/
 scraper/tests/__pycache__/
 scraper/__pycache__/
+.claude/
