@@ -1,7 +1,15 @@
 "use client";
 
-import { useRef } from "react";
-import { motion, useInView } from "framer-motion";
+import { useRef, useCallback } from "react";
+import {
+  motion,
+  useInView,
+  useMotionValue,
+  useMotionTemplate,
+  useAnimationFrame,
+  useReducedMotion,
+} from "framer-motion";
+import { useScrollVelocity } from "@/components/scroll/useScrollVelocity";
 
 // Curated portrait & editorial shots — two rows scrolling opposite directions
 const ROW_1 = [
@@ -29,18 +37,54 @@ const ROW_2 = [
 function PhotoRow({
   photos,
   direction = "left",
-  speed = "45s",
+  baseSpeed = 18,
 }: {
   photos: string[];
   direction?: "left" | "right";
-  speed?: string;
+  /** Resting drift speed in % of track width per second. */
+  baseSpeed?: number;
 }) {
+  const reduced = useReducedMotion();
+  const { skew, factor } = useScrollVelocity();
+  const paused = useRef(false);
+
+  const onHoverStart = useCallback(() => { paused.current = true; }, []);
+  const onHoverEnd = useCallback(() => { paused.current = false; }, []);
+
+  // Doubled track so wrapping the translate at -50% is seamless.
   const track = [...photos, ...photos];
-  const animClass = direction === "left" ? "animate-strip-left" : "animate-strip-right";
+
+  // Continuous translate (in % of the doubled track) driven manually so
+  // we can modulate its speed by live scroll velocity — no CSS keyframes.
+  const pct = useMotionValue(direction === "left" ? 0 : -50);
+
+  useAnimationFrame((_, delta) => {
+    if (reduced || paused.current) return;
+    // delta is ms; convert baseSpeed (%/s) → % moved this frame,
+    // scaled up by how fast the user is currently scrolling.
+    const speed = (factor.get() * baseSpeed * delta) / 1000;
+    let next = pct.get() + (direction === "left" ? -speed : speed);
+    // Seamless wrap across the doubled track (range -50% .. 0%).
+    if (next <= -50) next += 50;
+    else if (next >= 0) next -= 50;
+    pct.set(next);
+  });
+
+  // Compose translate (%) + velocity skew into one transform string.
+  const transform = useMotionTemplate`translateX(${pct}%) skewX(${skew}deg)`;
+
+  // Reduced motion: hold a static position, no transform updates.
+  const staticTransform =
+    direction === "left" ? "translateX(0%)" : "translateX(-50%)";
 
   return (
     <div className="overflow-hidden">
-      <div className={`flex gap-3 ${animClass} will-change-transform`} style={{ animationDuration: speed }}>
+      <motion.div
+        className="flex gap-3 will-change-transform"
+        style={{ transform: reduced ? staticTransform : transform }}
+        onHoverStart={onHoverStart}
+        onHoverEnd={onHoverEnd}
+      >
         {track.map((src, i) => (
           <div
             key={i}
@@ -55,7 +99,7 @@ function PhotoRow({
             <div className="absolute inset-0 bg-ink/0 group-hover:bg-ink/15 transition-colors duration-500" />
           </div>
         ))}
-      </div>
+      </motion.div>
     </div>
   );
 }
@@ -85,8 +129,8 @@ export function PhotoStrip() {
           </span>
         </motion.div>
 
-        <PhotoRow photos={ROW_1} direction="left" speed="55s" />
-        <PhotoRow photos={ROW_2} direction="right" speed="65s" />
+        <PhotoRow photos={ROW_1} direction="left" baseSpeed={16} />
+        <PhotoRow photos={ROW_2} direction="right" baseSpeed={13} />
       </motion.div>
     </section>
   );

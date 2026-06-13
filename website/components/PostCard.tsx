@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import type { PostData } from "@/lib/posts";
 
 interface PostCardProps {
@@ -9,19 +9,29 @@ interface PostCardProps {
   onClick: (post: PostData) => void;
 }
 
+// Widest grid layout (2xl) — stagger resets per visual row so cards
+// reveal as a quick left-to-right wave instead of a long global queue.
+const MAX_COLS = 4;
+const STEP = 0.06;
+
 export function PostCard({ post, index, onClick }: PostCardProps) {
+  const reduced = useReducedMotion();
   const bodyText = post.caption.replace(/#\w+/g, "").replace(/@\w+/g, "").trim();
   const firstLine = bodyText.split(/\n|\./)[0].trim();
+
+  // Column position within the row — caps delay at ~0.18s regardless of
+  // how many cards precede it, fixing the old `index * 0.05` pile-up.
+  const delay = reduced ? 0 : (index % MAX_COLS) * STEP;
 
   return (
     <motion.article
       className="relative group cursor-none border border-transparent hover:border-gold/30 transition-colors duration-500"
-      initial={{ opacity: 0, y: 24 }}
-      whileInView={{ opacity: 1, y: 0 }}
+      initial={reduced ? { opacity: 0 } : { opacity: 0, y: 24 }}
+      whileInView={reduced ? { opacity: 1 } : { opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-60px" }}
       transition={{
-        duration: 0.7,
-        delay: index * 0.05,
+        duration: reduced ? 0.3 : 0.7,
+        delay,
         ease: [0.16, 1, 0.3, 1],
       }}
       onClick={() => onClick(post)}

@@ -45,15 +45,16 @@ export function LoadingScreen({ onComplete }: LoadingScreenProps) {
     };
   }, [skip, onComplete]);
 
-  if (phase === "done") return null;
-
   return (
     <AnimatePresence>
-      <motion.div
+      {phase !== "done" && (
+        <motion.div
           className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-parchment"
           initial={{ opacity: 1 }}
+          animate={{ opacity: phase === "exiting" ? 0 : 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.6, ease: "easeInOut" }}
+          aria-hidden="true"
         >
           {/* ── Centered logo mark ── */}
           <motion.div
@@ -78,7 +79,8 @@ export function LoadingScreen({ onComplete }: LoadingScreenProps) {
               transition={{ duration: 1.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
             />
           </div>
-      </motion.div>
+        </motion.div>
+      )}
     </AnimatePresence>
   );
 }

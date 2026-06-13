@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { SimpleTracingBeam } from "./TracingBeam";
 import { SplitHeading } from "./SplitHeading";
+import { ParallaxImage, useParallax } from "./scroll/Parallax";
 
 interface ServiceItem {
   num: string;
@@ -109,6 +110,9 @@ function ServiceRow({ svc }: { svc: ServiceItem }) {
   const imgVariants = svc.reverse ? fadeLeft : fadeRight;
   const textVariants = svc.reverse ? fadeRight : fadeLeft;
 
+  /* Oversized numeral parallaxes at a stronger rate for editorial depth */
+  const { ref: numRef, y: numY } = useParallax(140);
+
   return (
     <motion.div
       className={`flex flex-col ${svc.reverse ? "md:flex-row-reverse" : "md:flex-row"} border-t border-linen`}
@@ -122,11 +126,12 @@ function ServiceRow({ svc }: { svc: ServiceItem }) {
           className="md:w-[55%] relative overflow-hidden"
           variants={imgVariants}
         >
-          <div className="aspect-[4/3] md:aspect-auto md:h-full min-h-[340px] relative group">
-            <img
+          <div className="aspect-[4/3] md:aspect-auto md:h-full min-h-[340px] relative">
+            {/* Image drifts within its frame on scroll for editorial parallax */}
+            <ParallaxImage
               src={svc.imagePath}
-              alt={svc.imageAlt}
-              className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+              alt={svc.imageAlt ?? ""}
+              className="absolute inset-0"
             />
             {/* Warm edge fade toward text */}
             <div
@@ -145,10 +150,14 @@ function ServiceRow({ svc }: { svc: ServiceItem }) {
         className="md:w-[45%] flex flex-col justify-center px-8 md:px-14 py-14 relative"
         variants={textVariants}
       >
-        {/* Oversized number */}
-        <span className="absolute top-6 right-8 font-display text-[80px] leading-none text-linen/60 select-none">
+        {/* Oversized number — parallaxes at a stronger rate for editorial depth */}
+        <motion.span
+          ref={numRef as React.RefObject<HTMLSpanElement>}
+          style={{ y: numY }}
+          className="absolute top-6 right-8 font-display text-[80px] leading-none text-linen/60 select-none pointer-events-none"
+        >
           {svc.num}
-        </span>
+        </motion.span>
 
         <p className="font-ui text-[9px] tracking-[0.4em] text-gold uppercase mb-4">
           {svc.subtitle}

@@ -32,9 +32,13 @@ export function Footer() {
             href="https://www.instagram.com/label_gabriel/"
             target="_blank"
             rel="noopener noreferrer"
-            className="font-ui text-[10px] tracking-[0.3em] text-stone uppercase hover:text-gold transition-colors duration-300"
+            className="group relative font-ui text-[10px] tracking-[0.3em] text-stone uppercase hover:text-gold transition-colors duration-300 rounded-sm pb-1"
           >
             @label_gabriel
+            <span
+              aria-hidden="true"
+              className="pointer-events-none absolute bottom-0 left-0 right-0 h-px origin-center scale-x-0 bg-gold transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-x-100"
+            />
           </a>
           <span className="text-linen">·</span>
           <span className="font-ui text-[10px] tracking-[0.3em] text-stone uppercase">

@@ -2,8 +2,14 @@
 
 import { motion } from "framer-motion";
 import { SplitHeading } from "./SplitHeading";
+import { useParallax, useScrollProgress } from "./scroll/Parallax";
 
 export function BrandStatement() {
+  /* Description column drifts slightly slower than the heading for depth */
+  const { ref: descRef, y: descY } = useParallax(48);
+  /* Thin gold rule draws in as the section scrolls through view */
+  const { ref: ruleRef, progress: ruleProgress } = useScrollProgress(["start 85%", "start 35%"]);
+
   return (
     <section className="bg-parchment border-b border-linen px-8 md:px-16 py-24 md:py-32">
       <div className="max-w-6xl mx-auto flex flex-col md:flex-row gap-16 md:gap-24 items-start">
@@ -17,15 +23,22 @@ export function BrandStatement() {
           </SplitHeading>
         </div>
 
-        {/* Right: brand description */}
+        {/* Right: brand description — parallax-drifts slower than the heading */}
         <motion.div
+          ref={descRef as React.RefObject<HTMLDivElement>}
           className="md:w-[40%] flex flex-col justify-center"
-          initial={{ opacity: 0, y: 28 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          style={{ y: descY }}
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
           viewport={{ once: true, margin: "-60px" }}
           transition={{ duration: 1, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
         >
-          <div className="w-8 h-px bg-gold mb-8" />
+          {/* Thin gold rule that draws in on scroll progress */}
+          <motion.div
+            ref={ruleRef as React.RefObject<HTMLDivElement>}
+            className="w-8 h-px bg-gold mb-8 origin-left"
+            style={{ scaleX: ruleProgress }}
+          />
           <p className="font-ui text-[13px] leading-[1.9] text-stone mb-6">
             Label Gabriel is a bespoke designer studio rooted in Alakode, Kerala — where every garment begins as a conversation and ends as an heirloom. Since 2024, we have dressed brides, blessed babies, and given families something beautiful to remember.
           </p>

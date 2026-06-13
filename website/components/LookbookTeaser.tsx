@@ -1,7 +1,9 @@
 "use client";
 
+import type { Ref } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { useParallax } from "@/components/scroll/Parallax";
 import type { PostData } from "@/lib/posts";
 
 interface LookbookTeaserProps {
@@ -27,6 +29,57 @@ const CELL = {
     transition: { duration: 0.8, ease: EASE },
   },
 };
+
+/**
+ * A single lookbook cell. Wraps the image in a scroll-parallax layer so
+ * the grid feels layered — tall cells drift more than short ones. The
+ * stagger-in reveal stays on the outer motion.div (variant `y`), while
+ * the parallax `y` lives on an inner wrapper to avoid clobbering it.
+ */
+function LookbookCell({
+  post,
+  label,
+  tall,
+}: {
+  post: PostData;
+  label: string;
+  tall: boolean;
+}) {
+  // Tall cells travel further for a deeper parallax sense of depth.
+  const { ref, y } = useParallax(tall ? 70 : 40);
+
+  return (
+    <motion.div
+      ref={ref as Ref<HTMLDivElement>}
+      className={`relative overflow-hidden group ${tall ? "row-span-2" : ""}`}
+      style={{ aspectRatio: tall ? "3/5" : "4/3" }}
+      variants={CELL}
+    >
+      {/* Parallax layer — over-scaled so drift never exposes edges. */}
+      <motion.div className="absolute inset-0" style={{ y }}>
+        <img
+          src={post.imagePath}
+          alt={label}
+          className="w-full h-[112%] object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
+        />
+      </motion.div>
+
+      {/* Gold-tinted overlay on hover */}
+      <div className="absolute inset-0 bg-gradient-to-t from-gold/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+      <div className="absolute inset-0 bg-ink/0 group-hover:bg-ink/15 transition-colors duration-500" />
+
+      {/* Label reveal on hover */}
+      <div className="absolute bottom-3 left-3 opacity-0 group-hover:opacity-100 translate-y-1 group-hover:translate-y-0 transition-all duration-400">
+        <span className="font-ui text-[9px] tracking-[0.35em] text-parchment uppercase">
+          {label}
+        </span>
+      </div>
+
+      {/* Gold border on hover */}
+      <div className="absolute inset-0 border border-transparent group-hover:border-gold/20 transition-colors duration-500 pointer-events-none" />
+    </motion.div>
+  );
+}
 
 export function LookbookTeaser({
   bridal,
@@ -81,35 +134,13 @@ export function LookbookTeaser({
         whileInView="show"
         viewport={{ once: true, margin: "-60px" }}
       >
-        {images.map(({ post, label, tall }, i) => (
-          <motion.div
+        {images.map(({ post, label, tall }) => (
+          <LookbookCell
             key={post!.id}
-            className={`relative overflow-hidden group ${
-              tall ? "row-span-2" : ""
-            }`}
-            style={{ aspectRatio: tall ? "3/5" : "4/3" }}
-            variants={CELL}
-          >
-            <img
-              src={post!.imagePath}
-              alt={label}
-              className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
-            />
-
-            {/* Gold-tinted overlay on hover */}
-            <div className="absolute inset-0 bg-gradient-to-t from-gold/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-            <div className="absolute inset-0 bg-ink/0 group-hover:bg-ink/15 transition-colors duration-500" />
-
-            {/* Label reveal on hover */}
-            <div className="absolute bottom-3 left-3 opacity-0 group-hover:opacity-100 translate-y-1 group-hover:translate-y-0 transition-all duration-400">
-              <span className="font-ui text-[9px] tracking-[0.35em] text-parchment uppercase">
-                {label}
-              </span>
-            </div>
-
-            {/* Gold border on hover */}
-            <div className="absolute inset-0 border border-transparent group-hover:border-gold/20 transition-colors duration-500 pointer-events-none" />
-          </motion.div>
+            post={post!}
+            label={label}
+            tall={tall}
+          />
         ))}
       </motion.div>
 

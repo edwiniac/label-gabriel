@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   motion,
   useMotionValue, useSpring, useTransform, useMotionTemplate,
+  useScroll, useReducedMotion,
   type MotionValue,
 } from "framer-motion";
 import Link from "next/link";
@@ -77,6 +78,35 @@ export function Hero() {
   const sGlowY = useSpring(glowY, { stiffness: 30, damping: 20 });
   const glowBg = useMotionTemplate`radial-gradient(circle 420px at ${sGlowX}% ${sGlowY}%, rgba(196,163,90,0.10) 0%, transparent 68%)`;
 
+  /* ── Scroll-out "depart": cinematic exit as the hero scrolls away ── */
+  const reduced = useReducedMotion();
+  const sectionRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end start"],
+  });
+  const sExit = useSpring(scrollYProgress, { stiffness: 120, damping: 32, restDelta: 0.001 });
+
+  /* Whole hero subtly scales + fades as it departs (opacity never below ~0.3) */
+  const sceneScale = useTransform(sExit, [0, 1], reduced ? [1, 1] : [1, 1.04]);
+  const sceneOpacity = useTransform(sExit, [0, 0.7, 1], reduced ? [1, 1, 1] : [1, 0.6, 0.3]);
+
+  /* Collage images drift up at slightly different rates for depth,
+     composed with the existing mouse-parallax Y of each layer */
+  const exitY0 = useTransform(sExit, [0, 1], reduced ? [0, 0] : [0, -120]);
+  const exitY1 = useTransform(sExit, [0, 1], reduced ? [0, 0] : [0, -190]);
+  const exitY2 = useTransform(sExit, [0, 1], reduced ? [0, 0] : [0, -70]);
+  const cy0 = useTransform([y0, exitY0] as MotionValue<number>[], ([m, e]: number[]) => m + e);
+  const cy1 = useTransform([y1, exitY1] as MotionValue<number>[], ([m, e]: number[]) => m + e);
+  const cy2 = useTransform([y2, exitY2] as MotionValue<number>[], ([m, e]: number[]) => m + e);
+
+  /* Left text column lifts gently — combines mouse-follow + scroll departure */
+  const exitTextYRaw = useTransform(sExit, [0, 1], reduced ? [0, 0] : [0, -64]);
+  const textYCombined = useTransform(
+    [textY, exitTextYRaw] as MotionValue<number>[],
+    ([t, e]: number[]) => t + e
+  );
+
   useEffect(() => {
     const onMove = (e: MouseEvent) => {
       rawX.set((e.clientX / window.innerWidth - 0.5) * 55);
@@ -93,12 +123,17 @@ export function Hero() {
   };
 
   return (
-    <section id="hero" className="relative h-screen flex overflow-hidden bg-parchment">
+    <motion.section
+      ref={sectionRef}
+      id="hero"
+      className="relative h-screen flex overflow-hidden bg-parchment"
+      style={{ scale: sceneScale, opacity: sceneOpacity, transformOrigin: "center 40%" }}
+    >
 
       {/* ── LEFT PANEL ── */}
       <motion.div
         className="relative z-10 flex flex-col h-full px-10 md:px-14 lg:px-20 w-full md:w-[46%] shrink-0"
-        style={{ x: textX, y: textY }}
+        style={{ x: textX, y: textYCombined }}
       >
 
         {/* ── LOGO ZONE — anchored top, owns its space ── */}
@@ -213,7 +248,7 @@ export function Hero() {
         {/* ── img0: Left column — full-height anchor (white saree) ── */}
         <motion.div
           className="absolute overflow-hidden"
-          style={{ top: "3%", left: "2%", width: "51%", height: "94%", x: x0, y: y0 }}
+          style={{ top: "3%", left: "2%", width: "51%", height: "94%", x: x0, y: cy0 }}
           initial={{ opacity: 0, scale: 0.97, y: 24 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           transition={{ duration: 1.3, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
@@ -230,7 +265,7 @@ export function Hero() {
         {/* ── img1: Right column top — bridal at window ── */}
         <motion.div
           className="absolute overflow-hidden border border-linen/50"
-          style={{ top: "3%", right: "2%", width: "43%", height: "47%", x: x1, y: y1, zIndex: 2 }}
+          style={{ top: "3%", right: "2%", width: "43%", height: "47%", x: x1, y: cy1, zIndex: 2 }}
           initial={{ opacity: 0, x: 28 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 1.2, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
@@ -247,7 +282,7 @@ export function Hero() {
         {/* ── img2: Right column bottom — pink tulle ── */}
         <motion.div
           className="absolute overflow-hidden border border-linen/50"
-          style={{ bottom: "3%", right: "2%", width: "43%", height: "45%", x: x2, y: y2, zIndex: 2 }}
+          style={{ bottom: "3%", right: "2%", width: "43%", height: "45%", x: x2, y: cy2, zIndex: 2 }}
           initial={{ opacity: 0, y: 28 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1.2, delay: 0.8, ease: [0.16, 1, 0.3, 1] }}
@@ -281,7 +316,7 @@ export function Hero() {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-parchment via-parchment/70 to-parchment/30" />
       </motion.div>
-    </section>
+    </motion.section>
   );
 }
 

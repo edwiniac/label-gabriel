@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 
 interface EmblemProps {
   size?: "sm" | "md" | "lg" | "xl";
@@ -15,10 +15,11 @@ const sizes = {
 };
 
 export function Emblem({ size = "md" }: EmblemProps) {
+  const reduce = useReducedMotion();
   return (
     <motion.div
       className="flex items-center"
-      whileHover={{ scale: 1.015, rotate: 2.5 }}
+      whileHover={reduce ? undefined : { scale: 1.015, rotate: 2.5 }}
       transition={{ type: "spring", stiffness: 200, damping: 18 }}
     >
       <img
