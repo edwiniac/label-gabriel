@@ -54,8 +54,11 @@ export function useScrollProgress(
   const ref = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({
     target: ref,
-    // framer-motion accepts these string edge keywords at runtime
-    offset: offset as never,
+    // framer-motion's offset type is a narrow union of literal strings;
+    // our callers pass runtime strings that always conform to the expected
+    // "start end" / "end start" / etc. keywords.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    offset: offset as any,
   });
   const progress = useSpring(scrollYProgress, {
     stiffness: 120,

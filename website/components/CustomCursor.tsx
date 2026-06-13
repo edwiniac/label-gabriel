@@ -8,12 +8,16 @@ const INTERACTIVE_SELECTOR =
 export function CustomCursor() {
   const dotRef = useRef<HTMLDivElement>(null);
   const ringRef = useRef<HTMLDivElement>(null);
-  const [enabled, setEnabled] = useState(false);
+  /* Default to enabled — avoids a single-frame flash of no cursor on desktop
+     (CSS hides native cursor, but React hasn't mounted our custom one yet).
+     On touch devices, the first mousemove never fires so the cursors stay hidden
+     and the native cursor is never suppressed. */
+  const [enabled, setEnabled] = useState(true);
 
-  /* ── Only enable on fine-pointer (mouse) devices ── */
+  /* ── Disable on touch / coarse-pointer devices ── */
   useEffect(() => {
     const mq = window.matchMedia("(hover: hover) and (pointer: fine)");
-    setEnabled(mq.matches);
+    if (!mq.matches) setEnabled(false);
     const handler = (e: MediaQueryListEvent) => setEnabled(e.matches);
     mq.addEventListener("change", handler);
     return () => mq.removeEventListener("change", handler);

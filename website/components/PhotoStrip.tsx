@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useCallback } from "react";
 import {
   motion,
   useInView,
@@ -46,6 +46,10 @@ function PhotoRow({
 }) {
   const reduced = useReducedMotion();
   const { skew, factor } = useScrollVelocity();
+  const paused = useRef(false);
+
+  const onHoverStart = useCallback(() => { paused.current = true; }, []);
+  const onHoverEnd = useCallback(() => { paused.current = false; }, []);
 
   // Doubled track so wrapping the translate at -50% is seamless.
   const track = [...photos, ...photos];
@@ -55,7 +59,7 @@ function PhotoRow({
   const pct = useMotionValue(direction === "left" ? 0 : -50);
 
   useAnimationFrame((_, delta) => {
-    if (reduced) return;
+    if (reduced || paused.current) return;
     // delta is ms; convert baseSpeed (%/s) → % moved this frame,
     // scaled up by how fast the user is currently scrolling.
     const speed = (factor.get() * baseSpeed * delta) / 1000;
@@ -78,6 +82,8 @@ function PhotoRow({
       <motion.div
         className="flex gap-3 will-change-transform"
         style={{ transform: reduced ? staticTransform : transform }}
+        onHoverStart={onHoverStart}
+        onHoverEnd={onHoverEnd}
       >
         {track.map((src, i) => (
           <div
