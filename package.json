@@ -1,0 +1,7 @@
+{
+  "name": "label-gabriel",
+  "private": true,
+  "scripts": {
+    "vercel-build": "cd website && npm install && npm run build"
+  }
+}
