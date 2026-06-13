@@ -26,7 +26,8 @@ const SPRING = { stiffness: 140, damping: 34, mass: 0.35 } as const;
  * spring-smoothed `y` MotionValue (in px).
  *
  * `distance` is the total travel: the element drifts from
- * `+distance/2` (entering) to `-distance/2` (leaving).
+ * `0` (entering — natural position, no server-render shift)
+ * to `-distance` (leaving — drifts upward out of view).
  */
 export function useParallax(distance = 80) {
   const ref = useRef<HTMLElement>(null);
@@ -38,7 +39,7 @@ export function useParallax(distance = 80) {
   const raw = useTransform(
     scrollYProgress,
     [0, 1],
-    reduced ? [0, 0] : [distance / 2, -distance / 2]
+    reduced ? [0, 0] : [0, -distance]
   );
   const y = useSpring(raw, SPRING);
   return { ref, y } as const;
@@ -135,7 +136,7 @@ export function ParallaxImage({
   const raw = useTransform(
     scrollYProgress,
     [0, 1],
-    reduced ? ["0px", "0px"] : [`${distance / 2}px`, `${-distance / 2}px`]
+    reduced ? ["0px", "0px"] : ["0px", `${-distance}px`]
   );
   const y = useSpring(raw, SPRING);
 
